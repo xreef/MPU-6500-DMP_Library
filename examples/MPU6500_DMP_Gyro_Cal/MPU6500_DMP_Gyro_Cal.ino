@@ -54,7 +54,7 @@ void loop()
   // Check for new data in the FIFO
   if ( imu.fifoAvailable() )
   {
-    // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
+    // Use dmpUpdateFifo to update the ax, gx, etc. values
     if ( imu.dmpUpdateFifo() == INV_SUCCESS)
     {
       printIMUData();
@@ -64,7 +64,7 @@ void loop()
 
 void printIMUData(void)
 {  
-  // After calling dmpUpdateFifo() the ax, gx, mx, etc. values
+  // After calling dmpUpdateFifo() the ax, gx, etc. values
   // are all updated.
   float gyroX = imu.calcGyro(imu.gx);
   float gyroY = imu.calcGyro(imu.gy);

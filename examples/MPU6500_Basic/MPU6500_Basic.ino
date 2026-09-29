@@ -44,10 +44,10 @@ void setup()
 
   // Use setSensors to turn on or off MPU-6500 sensors.
   // Any of the following defines can be combined:
-  // INV_XYZ_GYRO, INV_XYZ_ACCEL, INV_XYZ_COMPASS,
+  // INV_XYZ_GYRO, INV_XYZ_ACCEL,
   // INV_X_GYRO, INV_Y_GYRO, or INV_Z_GYRO
   // Enable all sensors:
-  imu.setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
+  imu.setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL);
 
   // Use setGyroFSR() and setAccelFSR() to configure the
   // gyroscope and accelerometer full scale ranges.
@@ -55,8 +55,6 @@ void setup()
   imu.setGyroFSR(2000); // Set gyro to 2000 dps
   // Accel options are +/- 2, 4, 8, or 16 g
   imu.setAccelFSR(2); // Set accel to +/-2g
-  // Note: the MPU-6500's magnetometer FSR is set at 
-  // +/- 4912 uT (micro-tesla's)
 
   // setLPF() can be used to set the digital low-pass filter
   // of the accelerometer and gyroscope.
@@ -67,39 +65,31 @@ void setup()
   // The sample rate of the accel/gyro can be set using
   // setSampleRate. Acceptable values range from 4Hz to 1kHz
   imu.setSampleRate(10); // Set sample rate to 10Hz
-
-  // Likewise, the compass (magnetometer) sample rate can be
-  // set using the setCompassSampleRate() function.
-  // This value can range between: 1-100Hz
-  imu.setCompassSampleRate(10); // Set mag rate to 10Hz
 }
 
 void loop() 
 {
   // dataReady() checks to see if new accel/gyro data
   // is available. It will return a boolean true or false
-  // (New magnetometer data cannot be checked, as the library
-  //  runs that sensor in single-conversion mode.)
   if ( imu.dataReady() )
   {
     // Call update() to update the imu objects sensor data.
     // You can specify which sensors to update by combining
-    // UPDATE_ACCEL, UPDATE_GYRO, UPDATE_COMPASS, and/or
-    // UPDATE_TEMPERATURE.
-    // (The update function defaults to accel, gyro, compass,
+    // UPDATE_ACCEL, UPDATE_GYRO, and/or UPDATE_TEMP.
+    // (The update function defaults to accel and gyro,
     //  so you don't have to specify these values.)
-    imu.update(UPDATE_ACCEL | UPDATE_GYRO | UPDATE_COMPASS);
+    imu.update(UPDATE_ACCEL | UPDATE_GYRO);
     printIMUData();
   }
 }
 
 void printIMUData(void)
 {  
-  // After calling update() the ax, ay, az, gx, gy, gz, mx,
-  // my, mz, time, and/or temerature class variables are all
+  // After calling update() the ax, ay, az, gx, gy, gz,
+  // time, and/or temerature class variables are all
   // updated. Access them by placing the object. in front:
 
-  // Use the calcAccel, calcGyro, and calcMag functions to
+  // Use the calcAccel and calcGyro functions to
   // convert the raw sensor readings (signed 16-bit values)
   // to their respective units.
   float accelX = imu.calcAccel(imu.ax);
@@ -108,16 +98,11 @@ void printIMUData(void)
   float gyroX = imu.calcGyro(imu.gx);
   float gyroY = imu.calcGyro(imu.gy);
   float gyroZ = imu.calcGyro(imu.gz);
-  float magX = imu.calcMag(imu.mx);
-  float magY = imu.calcMag(imu.my);
-  float magZ = imu.calcMag(imu.mz);
   
   SerialPort.println("Accel: " + String(accelX) + ", " +
               String(accelY) + ", " + String(accelZ) + " g");
   SerialPort.println("Gyro: " + String(gyroX) + ", " +
               String(gyroY) + ", " + String(gyroZ) + " dps");
-  SerialPort.println("Mag: " + String(magX) + ", " +
-              String(magY) + ", " + String(magZ) + " uT");
   SerialPort.println("Time: " + String(imu.time) + " ms");
   SerialPort.println();
 }

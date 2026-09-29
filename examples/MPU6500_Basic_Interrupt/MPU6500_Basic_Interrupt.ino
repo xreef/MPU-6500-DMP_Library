@@ -37,11 +37,10 @@ void setup()
     }
   }
 
-  // Configure the sensor to use the gyroscope, accelerometer, and magnetometer,
-  // and set their sample rates to 4Hz (slow rate to easily observe the data-ready signal).
-  imu.setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
+  // Configure the sensor to use the gyroscope and accelerometer,
+  // and set their sample rate to 4Hz (slow rate to easily observe the data-ready signal).
+  imu.setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL);
   imu.setSampleRate(4);          // Set accelerometer/gyroscope sample rate to 4Hz
-  imu.setCompassSampleRate(4);   // Set magnetometer sample rate to 4Hz
 
   // Enable the sensor's data-ready signal.
   // This activates an output that indicates when a new set of data is available.
@@ -65,8 +64,8 @@ void loop()
   if (digitalRead(INTERRUPT_PIN) == LOW)
   {
     // Update the sensor readings from the MPU-6500.
-    // This fetches the latest accelerometer, gyroscope, and magnetometer data.
-    imu.update(UPDATE_ACCEL | UPDATE_GYRO | UPDATE_COMPASS);
+    // This fetches the latest accelerometer and gyroscope data.
+    imu.update(UPDATE_ACCEL | UPDATE_GYRO);
     printIMUData();
   }
 }
@@ -74,7 +73,7 @@ void loop()
 void printIMUData(void)
 {
   // Convert raw sensor readings (16-bit signed values) into human-readable units.
-  // Accelerometer in g, Gyroscope in degrees per second, Magnetometer in microteslas.
+  // Accelerometer in g, Gyroscope in degrees per second.
   float accelX = imu.calcAccel(imu.ax);
   float accelY = imu.calcAccel(imu.ay);
   float accelZ = imu.calcAccel(imu.az);
@@ -82,10 +81,6 @@ void printIMUData(void)
   float gyroX = imu.calcGyro(imu.gx);
   float gyroY = imu.calcGyro(imu.gy);
   float gyroZ = imu.calcGyro(imu.gz);
-
-  float magX = imu.calcMag(imu.mx);
-  float magY = imu.calcMag(imu.my);
-  float magZ = imu.calcMag(imu.mz);
 
   // Note: If gyroscope values always display 0, verify that the gyroscope sensor
   // is properly enabled and configured in the setSensors() function.
@@ -102,9 +97,5 @@ void printIMUData(void)
   Serial.print(String(gyroX, 2)); Serial.print("  |   ");
   Serial.print(String(gyroY, 2)); Serial.print(" |   ");
   Serial.println(String(gyroZ, 2));
-  Serial.print("Mag (uT):   ");
-  Serial.print(String(magX, 2)); Serial.print("  | ");
-  Serial.print(String(magY, 2)); Serial.print(" | ");
-  Serial.println(String(magZ, 2));
   Serial.println("-----------------------------------------------------\n");
 }

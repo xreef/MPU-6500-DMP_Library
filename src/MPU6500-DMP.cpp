@@ -30,14 +30,11 @@ static void tap_cb(unsigned char direction, unsigned char count);
 MPU6500_DMP::MPU6500_DMP()
   : ax(0), ay(0), az(0),      // Accelerometer readings
     gx(0), gy(0), gz(0),      // Gyroscope readings
-    mx(0), my(0), mz(0),      // Magnetometer readings
     qw(0), qx(0), qy(0), qz(0),// Quaternion components
     temperature(0),          // Temperature reading
     time(0),                 // Timestamp
-    pitch(0.0f), roll(0.0f), yaw(0.0f), // Euler angles
-    heading(0.0f)            // Compass heading
+    pitch(0.0f), roll(0.0f), yaw(0.0f) // Euler angles
 {
-	_mSense = 6.665f; // Constant magnetometer sensitivity (4915 / 32760)
 	_aSense = 0.0f;   // Accelerometer sensitivity; updated after FSR is set
 	_gSense = 0.0f;   // Gyroscope sensitivity; updated after FSR is set
 }
@@ -54,9 +51,7 @@ inv_error_t MPU6500_DMP::begin(void)
 	if (result)
 		return result;
 	
-	mpu_set_bypass(1); // Place all slaves (including compass) on primary bus
-	
-	setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
+	setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL);
 	
 	_gSense = getGyroSens();
 	_aSense = getAccelSens();
@@ -92,7 +87,7 @@ short MPU6500_DMP::getIntStatus(void)
 // Accelerometer Low-Power Mode. Rate options:
 // 1.25 (1), 2.5 (2), 5, 10, 20, 40, 
 // 80, 160, 320, or 640 Hz
-// Disables compass and gyro
+// Disables gyro
 inv_error_t MPU6500_DMP::lowPowerAccel(unsigned short rate)
 {
 	return mpu_lp_accel_mode(rate);
@@ -140,16 +135,6 @@ unsigned char MPU6500_DMP::getAccelFSR(void)
 	return 0;	
 }
 
-unsigned short MPU6500_DMP::getMagFSR(void)
-{
-	unsigned short tmp;
-	if (mpu_get_compass_fsr(&tmp) == INV_SUCCESS)
-	{
-		return tmp;
-	}
-	return 0;
-}
-
 inv_error_t MPU6500_DMP::setLPF(unsigned short lpf)
 {
 	return mpu_set_lpf(lpf);
@@ -180,22 +165,6 @@ unsigned short MPU6500_DMP::getSampleRate(void)
 	return 0;
 }
 
-inv_error_t MPU6500_DMP::setCompassSampleRate(unsigned short rate)
-{
-	return mpu_set_compass_sample_rate(rate);
-}
-
-unsigned short MPU6500_DMP::getCompassSampleRate(void)
-{
-	unsigned short tmp;
-	if (mpu_get_compass_sample_rate(&tmp) == INV_SUCCESS)
-	{
-		return tmp;
-	}
-	
-	return 0;
-}
-
 float MPU6500_DMP::getGyroSens(void)
 {
 	float sens;
@@ -214,11 +183,6 @@ unsigned short MPU6500_DMP::getAccelSens(void)
 		return sens;
 	}
 	return 0;
-}
-
-float MPU6500_DMP::getMagSens(void)
-{
-	return 0.15; // Static, 4915/32760
 }
 
 unsigned char MPU6500_DMP::getFifoConfig(void)
@@ -300,19 +264,16 @@ inv_error_t MPU6500_DMP::update(unsigned char sensors)
 {
 	inv_error_t aErr = INV_SUCCESS;
 	inv_error_t gErr = INV_SUCCESS;
-	inv_error_t mErr = INV_SUCCESS;
 	inv_error_t tErr = INV_SUCCESS;
 	
 	if (sensors & UPDATE_ACCEL)
 		aErr = updateAccel();
 	if (sensors & UPDATE_GYRO)
 		gErr = updateGyro();
-	if (sensors & UPDATE_COMPASS)
-		mErr = updateCompass();
 	if (sensors & UPDATE_TEMP)
 		tErr = updateTemperature();
 	
-	return aErr | gErr | mErr | tErr;
+	return aErr | gErr | tErr;
 }
 
 int MPU6500_DMP::updateAccel(void)
@@ -340,20 +301,6 @@ int MPU6500_DMP::updateGyro(void)
 	gx = data[X_AXIS];
 	gy = data[Y_AXIS];
 	gz = data[Z_AXIS];
-	return INV_SUCCESS;
-}
-
-int MPU6500_DMP::updateCompass(void)
-{
-	short data[3];
-	
-	if (mpu_get_compass_reg(data, &time))
-	{
-		return INV_ERROR;		
-	}
-	mx = data[X_AXIS];
-	my = data[Y_AXIS];
-	mz = data[Z_AXIS];
 	return INV_SUCCESS;
 }
 
@@ -606,11 +553,6 @@ float MPU6500_DMP::calcGyro(int axis)
 	return (float) axis / (float) _gSense;
 }
 
-float MPU6500_DMP::calcMag(int axis)
-{
-	return (float) axis / (float) _mSense;
-}
-
 float MPU6500_DMP::calcTempCelsius()
 {
 	return ((float)temperature)/100000;
@@ -668,22 +610,6 @@ void MPU6500_DMP::computeEulerAngles(bool degrees)
         pitch = pitch * 180.0 / M_PI;
         yaw = yaw * 180.0 / M_PI;
     }
-}
-
-float MPU6500_DMP::computeCompassHeading(void)
-{
-	if (my == 0)
-		heading = (mx < 0) ? PI : 0;
-	else
-		heading = atan2(mx, my);
-	
-	if (heading > PI) heading -= (2 * PI);
-	else if (heading < -PI) heading += (2 * PI);
-	else if (heading < 0) heading += 2 * PI;
-	
-	heading*= 180.0 / PI;
-	
-	return heading;
 }
 
 unsigned short MPU6500_DMP::orientation_row_2_scale(const signed char *row)

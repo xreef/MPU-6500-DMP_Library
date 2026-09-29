@@ -12,7 +12,7 @@ https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 The MPU-6500's digital motion processor (DMP) can estimate
 steps taken -- effecting a pedometer.
 
-After uploading the code, try shaking the 9DoF up and
+After uploading the code, try shaking the board up and
 down at a "stepping speed."
 
 *************************************************************/

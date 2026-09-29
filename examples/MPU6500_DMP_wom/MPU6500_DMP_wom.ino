@@ -20,9 +20,6 @@
 
 #include <MPU6500-DMP.h>  // Include the MPU6500 DMP library
 
-// Define MPU6500 mode to disable the magnetometer when using DMP only.
-#define MPU6500
-
 // Define the GPIO pin used for the Wake-on-Motion interrupt.
 #define INTERRUPT_PIN 1
 
@@ -59,7 +56,7 @@ void setup() {
   }
 
   // Configure the sensor to use only the accelerometer to save power.
-  // This powers down the gyroscope and magnetometer.
+  // This powers down the gyroscope.
   imu.setSensors(INV_XYZ_ACCEL);
 
   // Configure the interrupt pin to be active-low.
@@ -112,8 +109,8 @@ void imuISR() {
 void readSensorData() {
   // Check if new sensor data is available.
   if (imu.dataReady()) {
-    // Update the sensor data (accelerometer, gyroscope, and magnetometer).
-    imu.update(UPDATE_ACCEL | UPDATE_GYRO | UPDATE_COMPASS);
+    // Update the sensor data (accelerometer and gyroscope).
+    imu.update(UPDATE_ACCEL | UPDATE_GYRO);
 
     // Calculate sensor readings.
     float ax = imu.calcAccel(imu.ax);
@@ -123,10 +120,6 @@ void readSensorData() {
     float gx = imu.calcGyro(imu.gx);
     float gy = imu.calcGyro(imu.gy);
     float gz = imu.calcGyro(imu.gz);
-
-    float mx = imu.calcMag(imu.mx);
-    float my = imu.calcMag(imu.my);
-    float mz = imu.calcMag(imu.mz);
 
     // Print sensor data in a neat tabular format.
     SerialPort.println("------------------------------------------------");
@@ -139,10 +132,6 @@ void readSensorData() {
     SerialPort.print("Gyro (dps):  X = "); SerialPort.print(gx, 2);
     SerialPort.print(" | Y = "); SerialPort.print(gy, 2);
     SerialPort.print(" | Z = "); SerialPort.println(gz, 2);
-
-    SerialPort.print("Mag (uT):   X = "); SerialPort.print(mx, 2);
-    SerialPort.print(" | Y = "); SerialPort.print(my, 2);
-    SerialPort.print(" | Z = "); SerialPort.println(mz, 2);
     SerialPort.println("------------------------------------------------\n");
   }
 }

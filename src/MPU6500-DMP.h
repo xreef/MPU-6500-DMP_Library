@@ -8,7 +8,8 @@ Jim Lindblom @ SparkFun Electronics
 original creation date: November 23, 2016
 https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
-This library implements motion processing functions of Invensense's MPU-6500.
+This library implements motion processing functions of Invensense's MPU-6500
+(6-DOF: 3-axis gyroscope + 3-axis accelerometer, no magnetometer).
 It is based on their Emedded MotionDriver 6.12 library.
 	https://www.invensense.com/developers/software-downloads/
 ******************************************************************************/
@@ -41,7 +42,6 @@ enum t_axisOrder {
 // Define's passed to update(), to request a specific sensor (or multiple):
 #define UPDATE_ACCEL   (1<<1)
 #define UPDATE_GYRO    (1<<2)
-#define UPDATE_COMPASS (1<<3)
 #define UPDATE_TEMP    (1<<4)
 
 #define INT_ACTIVE_HIGH 0
@@ -67,17 +67,15 @@ class MPU6500_DMP
 public:
 	int ax, ay, az;
 	int gx, gy, gz;
-	int mx, my, mz;
 	long qw, qx, qy, qz;
 	long temperature;
 	unsigned long time;
 	float pitch, roll, yaw;
-	float heading;
 	
 	MPU6500_DMP();
 	
-	// begin(void) -- Verifies communication with the MPU-6500 and the AK8963,
-	// and initializes them to the default state:
+	// begin(void) -- Verifies communication with the MPU-6500,
+	// and initializes it to the default state:
 	// All sensors enabled
 	// Gyro FSR: +/- 2000 dps
 	// Accel FSR: +/- 2g
@@ -87,8 +85,8 @@ public:
 	inv_error_t begin(void);
 	
 	// setSensors(unsigned char) -- Turn on or off MPU-6500 sensors. Any of the 
-	// following defines can be combined: INV_XYZ_GYRO, INV_XYZ_ACCEL, 
-	// INV_XYZ_COMPASS, INV_X_GYRO, INV_Y_GYRO, or INV_Z_GYRO
+	// following defines can be combined: INV_XYZ_GYRO, INV_XYZ_ACCEL,
+	// INV_X_GYRO, INV_Y_GYRO, or INV_Z_GYRO
 	// Input: Combination of enabled sensors. Unless specified a sensor will be
 	//  disabled.
 	// Output: INV_SUCCESS (0) on success, otherwise error
@@ -119,14 +117,6 @@ public:
 	// Output: Currently set accel sensitivity (e.g. 16384, 8192, 4096, 2048)
 	unsigned short getAccelSens(void);
 	
-	// getMagFSR -- Returns the current magnetometer FSR
-	// Output: Current mag uT range - +/-1450 uT
-	unsigned short getMagFSR(void);
-	// getMagSens -- Returns current magnetometer sensitivity. The FSR 
-	// divided by the resolution of the sensor (signed 16-bit).
-	// Output: Currently set mag sensitivity (e.g. 0.15)
-	float getMagSens(void);
-	
 	// setLPF -- Sets the digital low-pass filter of the accel and gyro.
 	// Can be any of the following: 188, 98, 42, 20, 10, 5 (value in Hz)
 	// Input: 188, 98, 42, 20, 10, or 5 (defaults to 5 if incorrectly set)
@@ -149,42 +139,26 @@ public:
 	// Output: set sample rate of the accel/gyro. A value between 4-1000.
 	unsigned short getSampleRate(void);
 	
-	// setCompassSampleRate -- Set the magnetometer sample rate to a value
-	// between 1Hz and 100 Hz.
-	// The library will make an attempt to get as close as possible to the
-	// requested sample rate.
-	// Input: Value between 1 and 100, indicating the desired sample rate
-	// Output: INV_SUCCESS (0) on success, otherwise error
-	inv_error_t setCompassSampleRate(unsigned short rate);
-	// getCompassSampleRate -- Get the currently set magnetometer sample rate.
-	// May differ slightly from what was set in setCompassSampleRate.
-	//
-	// Output: set sample rate of the magnetometer. A value between 1-100
-	unsigned short getCompassSampleRate(void);
-	
 	// dataReady -- checks to see if new accel/gyro data is available.
-	// (New magnetometer data cannot be checked, as the library runs that sensor 
-	//  in single-conversion mode.)
 	// Output: true if new accel/gyro data is available
 	bool dataReady();
 	
 	// update -- Reads latest data from the MPU-6500's data registers.
 	// Sensors to be updated can be set using the [sensors] parameter.
 	// [sensors] can be any combination of UPDATE_ACCEL, UPDATE_GYRO,
-	// UPDATE_COMPASS, and UPDATE_TEMP.
+	// and UPDATE_TEMP.
 	// Output: INV_SUCCESS (0) on success, otherwise error
-	// Note: after a successful update the public sensor variables 
-	// (e.g. ax, ay, az, gx, gy, gz) will be updated with new data 
-	inv_error_t update(unsigned char sensors = 
-	                   UPDATE_ACCEL | UPDATE_GYRO | UPDATE_COMPASS);
-	
-	// updateAccel, updateGyro, updateCompass, and updateTemperature are 
+	// Note: after a successful update the public sensor variables
+	// (e.g. ax, ay, az, gx, gy, gz) will be updated with new data
+	inv_error_t update(unsigned char sensors =
+	                   UPDATE_ACCEL | UPDATE_GYRO);
+
+	// updateAccel, updateGyro, and updateTemperature are
 	// called by the update() public method. They read from their respective
 	// sensor and update the class variable (e.g. ax, ay, az)
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t updateAccel(void);
 	inv_error_t updateGyro(void);
-	inv_error_t updateCompass(void);
 	inv_error_t updateTemperature(void);
 	
 	// configureFifo(unsigned char) -- Initialize the FIFO, set it to read from
@@ -349,8 +323,6 @@ public:
 	float calcAccel(int axis);
 	// calcGyro -- Convert 16-bit signed gyroscope value to degree's per second
 	float calcGyro(int axis);
-	// calcMag -- Convert 16-bit signed magnetometer value to microtesla (uT)
-	float calcMag(int axis);
 
 	// calcTempCelsius -- Convert the raw temperature value from the sensor to degrees Celsius
 	float calcTempCelsius();
@@ -364,23 +336,22 @@ public:
 	
 	// computeEulerAngles -- Compute euler angles based on most recently read qw, qx, qy, and qz
 	// Input: boolean indicating whether angle results are presented in degrees or radians
-	// Output: class variables roll, pitch, and yaw will be updated on exit.	
+	// Output: class variables roll, pitch, and yaw will be updated on exit.
+	// Note: the MPU-6500 has no magnetometer, so the DMP quaternion is 6-axis
+	// (accel + gyro). Roll and pitch are referenced to gravity; yaw is relative
+	// to the start-up heading and drifts slowly over time.
 	void computeEulerAngles(bool degrees = true);
-	
-	// computeCompassHeading -- Compute heading based on most recently read mx, my, and mz values
-	// Output: class variable heading will be updated on exit
-	float computeCompassHeading(void);
 	
 	// selfTest -- Run gyro and accel self-test.
 	// Output: Returns bit mask, 1 indicates success. A 0x7 is success on all sensors.
 	//         Bit pos 0: gyro
 	//         Bit pos 1: accel
-	//         Bit pos 2: mag
+	//         Bit pos 2: always 1 (no magnetometer on the MPU-6500)
 	int selfTest(unsigned char debug = 0);
 	
 private:
 	unsigned short _aSense;
-	float _gSense, _mSense;
+	float _gSense;
 	
 	// Convert a QN-format number to a float
 	float qToFloat(long number, unsigned char q);

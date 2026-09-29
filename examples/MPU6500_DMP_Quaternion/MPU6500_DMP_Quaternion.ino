@@ -58,12 +58,14 @@ void loop()
   // Check for new data in the FIFO
   if ( imu.fifoAvailable() )
   {
-    // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
+    // Use dmpUpdateFifo to update the ax, gx, etc. values
     if ( imu.dmpUpdateFifo() == INV_SUCCESS)
     {
       // computeEulerAngles can be used -- after updating the
       // quaternion values -- to estimate roll, pitch, and yaw
       imu.computeEulerAngles();
+      // Note: without a magnetometer yaw is relative to the
+      // start-up heading and drifts slowly over time.
       printIMUData();
     }
   }
@@ -71,7 +73,7 @@ void loop()
 
 void printIMUData(void)
 {  
-  // After calling dmpUpdateFifo() the ax, gx, mx, etc. values
+  // After calling dmpUpdateFifo() the ax, gx, etc. values
   // are all updated.
   // Quaternion values are, by default, stored in Q30 long
   // format. calcQuat turns them into a float between -1 and 1
