@@ -1,21 +1,21 @@
 /************************************************************
-MPU9250_DMP_Gyro_Cal
- Gyro calibration example for MPU-9250 DMP Arduino Library 
+MPU6500_DMP_Gyro_Cal
+ Gyro calibration example for MPU-6500 DMP Arduino Library 
 
   Renzo Mischianti @ mischianti.org
- https://github.com/xreef/MPU-9250-DMP_Library
+ https://github.com/xreef/MPU-6500-DMP_Library
 
 Jim Lindblom @ SparkFun Electronics
 original creation date: November 23, 2016
 https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
-This example sketch demonstrates how to use the MPU-9250's
+This example sketch demonstrates how to use the MPU-6500's
 digital motion processor (DMP) to calibrate the gyroscope.
 After eight seconds of no motion, the DMP will compute
 gyro biases and subtract them.
 
 *************************************************************/
-#include <MPU9250-DMP.h>
+#include <MPU6500-DMP.h>
 
 #if defined(SAMD)
 #define SerialPort SerialUSB
@@ -23,7 +23,7 @@ gyro biases and subtract them.
 #define SerialPort Serial
 #endif
 
-MPU9250_DMP imu;
+MPU6500_DMP imu;
 
 void setup() 
 {
@@ -34,7 +34,7 @@ void setup()
   {
     while (1)
     {
-      SerialPort.println("Unable to communicate with MPU-9250");
+      SerialPort.println("Unable to communicate with MPU-6500");
       SerialPort.println("Check connections, and try again.");
       SerialPort.println();
       delay(5000);

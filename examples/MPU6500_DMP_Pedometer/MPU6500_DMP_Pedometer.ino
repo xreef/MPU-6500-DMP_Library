@@ -1,22 +1,22 @@
 /************************************************************
-MPU9250_DMP_Pedometer
- Pedometer example for MPU-9250 DMP Arduino Library
+MPU6500_DMP_Pedometer
+ Pedometer example for MPU-6500 DMP Arduino Library
 
   Renzo Mischianti @ mischianti.org
- https://github.com/xreef/MPU-9250-DMP_Library
+ https://github.com/xreef/MPU-6500-DMP_Library
 
 Jim Lindblom @ SparkFun Electronics
 original creation date: November 23, 2016
 https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
-The MPU-9250's digital motion processor (DMP) can estimate
+The MPU-6500's digital motion processor (DMP) can estimate
 steps taken -- effecting a pedometer.
 
 After uploading the code, try shaking the 9DoF up and
 down at a "stepping speed."
 
 *************************************************************/
-#include <MPU9250-DMP.h>
+#include <MPU6500-DMP.h>
 
 #if defined(SAMD)
 #define SerialPort SerialUSB
@@ -24,7 +24,7 @@ down at a "stepping speed."
 #define SerialPort Serial
 #endif
 
-MPU9250_DMP imu;
+MPU6500_DMP imu;
 
 unsigned long stepCount = 0;
 unsigned long stepTime = 0;
@@ -39,7 +39,7 @@ void setup()
   {
     while (1)
     {
-      SerialPort.println("Unable to communicate with MPU-9250");
+      SerialPort.println("Unable to communicate with MPU-6500");
       SerialPort.println("Check connections, and try again.");
       SerialPort.println();
       delay(5000);

@@ -1,21 +1,21 @@
 /************************************************************
-MPU9250_FIFO_Basic
- Basic example sketch for MPU-9250 DMP Arduino Library 
+MPU6500_FIFO_Basic
+ Basic example sketch for MPU-6500 DMP Arduino Library 
 
   Renzo Mischianti @ mischianti.org
- https://github.com/xreef/MPU-9250-DMP_Library
+ https://github.com/xreef/MPU-6500-DMP_Library
 
 Jim Lindblom @ SparkFun Electronics
 original creation date: November 23, 2016
 https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
-This example sketch demonstrates how to use the MPU-9250's
+This example sketch demonstrates how to use the MPU-6500's
 512 byte first-in, first-out (FIFO) buffer. The FIFO can be
 set to store either accelerometer and/or gyroscope (not the
 magnetometer, though :( ).
 
 *************************************************************/
-#include <MPU9250-DMP.h>
+#include <MPU6500-DMP.h>
 
 #if defined(SAMD)
 #define SerialPort SerialUSB
@@ -23,21 +23,21 @@ magnetometer, though :( ).
 #define SerialPort Serial
 #endif
 
-MPU9250_DMP imu;
+MPU6500_DMP imu;
 
 void setup() 
 {
   SerialPort.begin(115200);
 
   // Call imu.begin() to verify communication with and
-  // initialize the MPU-9250 to it's default values.
+  // initialize the MPU-6500 to it's default values.
   // Most functions return an error code - INV_SUCCESS (0)
   // indicates the IMU was present and successfully set up
   if (imu.begin() != INV_SUCCESS)
   {
     while (1)
     {
-      SerialPort.println("Unable to communicate with MPU-9250");
+      SerialPort.println("Unable to communicate with MPU-6500");
       SerialPort.println("Check connections, and try again.");
       SerialPort.println();
       delay(5000);

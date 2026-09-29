@@ -1,30 +1,28 @@
 /******************************************************************************
-MPU9250-DMP.h - MPU-9250 Digital Motion Processor Arduino Library 
+MPU6500-DMP.h - MPU-6500 Digital Motion Processor Arduino Library 
 
  Renzo Mischianti @ mischianti.org
- https://github.com/xreef/MPU-9250-DMP_Library
+ https://github.com/xreef/MPU-6500-DMP_Library
 
 Jim Lindblom @ SparkFun Electronics
 original creation date: November 23, 2016
 https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
-This library implements motion processing functions of Invensense's MPU-9250.
+This library implements motion processing functions of Invensense's MPU-6500.
 It is based on their Emedded MotionDriver 6.12 library.
 	https://www.invensense.com/developers/software-downloads/
 ******************************************************************************/
-#ifndef _SPARKFUN_MPU9250_DMP_H_
-#define _SPARKFUN_MPU9250_DMP_H_
+#ifndef _MPU6500_DMP_H_
+#define _MPU6500_DMP_H_
 
 #include <Wire.h>
 #include <Arduino.h>
 
 // Optimally, these defines would be passed as compiler options, but Arduino
 // doesn't give us a great way to do that.
-#define MPU9250
-#define AK8963_SECONDARY
-#define COMPASS_ENABLED
+#define MPU6500
 
-// Include the Invensense MPU9250 driver and DMP keys:
+// Include the Invensense MPU6500 driver and DMP keys:
 extern "C" {
 #include "invesense/inv_mpu.h"
 #include "invesense/inv_mpu_dmp_motion_driver.h"
@@ -64,7 +62,7 @@ const signed char defaultOrientation[9] = {
 #define ORIENT_REVERSE_PORTRAIT  2
 #define ORIENT_REVERSE_LANDSCAPE 3
 
-class MPU9250_DMP 
+class MPU6500_DMP 
 {
 public:
 	int ax, ay, az;
@@ -76,9 +74,9 @@ public:
 	float pitch, roll, yaw;
 	float heading;
 	
-	MPU9250_DMP();
+	MPU6500_DMP();
 	
-	// begin(void) -- Verifies communication with the MPU-9250 and the AK8963,
+	// begin(void) -- Verifies communication with the MPU-6500 and the AK8963,
 	// and initializes them to the default state:
 	// All sensors enabled
 	// Gyro FSR: +/- 2000 dps
@@ -88,7 +86,7 @@ public:
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t begin(void);
 	
-	// setSensors(unsigned char) -- Turn on or off MPU-9250 sensors. Any of the 
+	// setSensors(unsigned char) -- Turn on or off MPU-6500 sensors. Any of the 
 	// following defines can be combined: INV_XYZ_GYRO, INV_XYZ_ACCEL, 
 	// INV_XYZ_COMPASS, INV_X_GYRO, INV_Y_GYRO, or INV_Z_GYRO
 	// Input: Combination of enabled sensors. Unless specified a sensor will be
@@ -170,7 +168,7 @@ public:
 	// Output: true if new accel/gyro data is available
 	bool dataReady();
 	
-	// update -- Reads latest data from the MPU-9250's data registers.
+	// update -- Reads latest data from the MPU-6500's data registers.
 	// Sensors to be updated can be set using the [sensors] parameter.
 	// [sensors] can be any combination of UPDATE_ACCEL, UPDATE_GYRO,
 	// UPDATE_COMPASS, and UPDATE_TEMP.
@@ -211,22 +209,22 @@ public:
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t resetFifo(void);
 	
-	// enableInterrupt -- Configure the MPU-9250's interrupt output to indicate
+	// enableInterrupt -- Configure the MPU-6500's interrupt output to indicate
 	// when new data is ready.
 	// Input: 0 to disable, >=1 to enable
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t enableInterrupt(unsigned char enable = 1);
-	// setIntLevel -- Configure the MPU-9250's interrupt to be either active-
+	// setIntLevel -- Configure the MPU-6500's interrupt to be either active-
 	// high or active-low.
 	// Input: 0 for active-high, 1 for active-low
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t setIntLevel(unsigned char active_low);
-	// setIntLatched -- Configure the MPU-9250's interrupt to latch or operate
+	// setIntLatched -- Configure the MPU-6500's interrupt to latch or operate
 	// as a 50us pulse.
 	// Input: 0 for 
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t setIntLatched(unsigned char enable);
-	// getIntStatus -- Reads the MPU-9250's INT_STATUS register, which can
+	// getIntStatus -- Reads the MPU-6500's INT_STATUS register, which can
 	// indicate what (if anything) caused an interrupt (e.g. FIFO overflow or
 	// or data read).
 	// Output: contents of the INT_STATUS register
@@ -389,4 +387,4 @@ private:
 	unsigned short orientation_row_2_scale(const signed char *row);
 };
 
-#endif // _SPARKFUN_MPU9250_DMP_H_
+#endif // _MPU6500_DMP_H_

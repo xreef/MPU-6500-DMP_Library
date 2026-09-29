@@ -1,15 +1,15 @@
 /************************************************************
-MPU9250_DMP_Quaternion
- Quaternion example for MPU-9250 DMP Arduino Library 
+MPU6500_DMP_Quaternion
+ Quaternion example for MPU-6500 DMP Arduino Library 
 
   Renzo Mischianti @ mischianti.org
- https://github.com/xreef/MPU-9250-DMP_Library
+ https://github.com/xreef/MPU-6500-DMP_Library
 
 Jim Lindblom @ SparkFun Electronics
 original creation date: November 23, 2016
 https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
-The MPU-9250's digital motion processor (DMP) can calculate
+The MPU-6500's digital motion processor (DMP) can calculate
 four unit quaternions, which can be used to represent the
 rotation of an object.
 
@@ -19,7 +19,7 @@ monitor. It also calculates pitch, roll, and yaw from those
 values.
 
 *************************************************************/
-#include <MPU9250-DMP.h>
+#include <MPU6500-DMP.h>
 
 #if defined(SAMD)
 #define SerialPort SerialUSB
@@ -27,7 +27,7 @@ values.
 #define SerialPort Serial
 #endif
 
-MPU9250_DMP imu;
+MPU6500_DMP imu;
 
 void setup() 
 {
@@ -38,7 +38,7 @@ void setup()
   {
     while (1)
     {
-      SerialPort.println("Unable to communicate with MPU-9250");
+      SerialPort.println("Unable to communicate with MPU-6500");
       SerialPort.println("Check connections, and try again.");
       SerialPort.println();
       delay(5000);

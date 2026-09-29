@@ -1,33 +1,33 @@
 /******************************************************************************
-MPU9250-DMP.cpp - MPU-9250 Digital Motion Processor Arduino Library 
+MPU6500-DMP.cpp - MPU-6500 Digital Motion Processor Arduino Library 
 
  Renzo Mischianti @ mischianti.org
- https://github.com/xreef/MPU-9250-DMP_Library
+ https://github.com/xreef/MPU-6500-DMP_Library
 
 Jim Lindblom @ SparkFun Electronics
 original creation date: November 23, 2016
 https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
-This library implements motion processing functions of Invensense's MPU-9250.
+This library implements motion processing functions of Invensense's MPU-6500.
 It is based on their Emedded MotionDriver 6.12 library.
 	https://www.invensense.com/developers/software-downloads/
 
 ******************************************************************************/
-#include "MPU9250-DMP.h"
-#include "MPU9250_RegisterMap.h"
+#include "MPU6500-DMP.h"
+#include "MPU6500_RegisterMap.h"
 
 extern "C" {
 #include "invesense/inv_mpu.h"
 }
 
-static unsigned char mpu9250_orientation;
+static unsigned char mpu6500_orientation;
 static unsigned char tap_count;
 static unsigned char tap_direction;
 static bool _tap_available;
 static void orient_cb(unsigned char orient);
 static void tap_cb(unsigned char direction, unsigned char count);
 
-MPU9250_DMP::MPU9250_DMP()
+MPU6500_DMP::MPU6500_DMP()
   : ax(0), ay(0), az(0),      // Accelerometer readings
     gx(0), gy(0), gz(0),      // Gyroscope readings
     mx(0), my(0), mz(0),      // Magnetometer readings
@@ -42,7 +42,7 @@ MPU9250_DMP::MPU9250_DMP()
 	_gSense = 0.0f;   // Gyroscope sensitivity; updated after FSR is set
 }
 
-inv_error_t MPU9250_DMP::begin(void)
+inv_error_t MPU6500_DMP::begin(void)
 {
 	inv_error_t result;
     struct int_param_s int_param;
@@ -64,22 +64,22 @@ inv_error_t MPU9250_DMP::begin(void)
 	return result;
 }
 
-inv_error_t MPU9250_DMP::enableInterrupt(unsigned char enable)
+inv_error_t MPU6500_DMP::enableInterrupt(unsigned char enable)
 {
 	return set_int_enable(enable);
 }
 
-inv_error_t MPU9250_DMP::setIntLevel(unsigned char active_low)
+inv_error_t MPU6500_DMP::setIntLevel(unsigned char active_low)
 {
 	return mpu_set_int_level(active_low);
 }
 
-inv_error_t MPU9250_DMP::setIntLatched(unsigned char enable)
+inv_error_t MPU6500_DMP::setIntLatched(unsigned char enable)
 {
 	return mpu_set_int_latched(enable);
 }
 
-short MPU9250_DMP::getIntStatus(void)
+short MPU6500_DMP::getIntStatus(void)
 {
 	short status;
 	if (mpu_get_int_status(&status) == INV_SUCCESS)
@@ -93,12 +93,12 @@ short MPU9250_DMP::getIntStatus(void)
 // 1.25 (1), 2.5 (2), 5, 10, 20, 40, 
 // 80, 160, 320, or 640 Hz
 // Disables compass and gyro
-inv_error_t MPU9250_DMP::lowPowerAccel(unsigned short rate)
+inv_error_t MPU6500_DMP::lowPowerAccel(unsigned short rate)
 {
 	return mpu_lp_accel_mode(rate);
 }
 
-inv_error_t MPU9250_DMP::setGyroFSR(unsigned short fsr)
+inv_error_t MPU6500_DMP::setGyroFSR(unsigned short fsr)
 {
 	inv_error_t err;
 	err = mpu_set_gyro_fsr(fsr);
@@ -109,7 +109,7 @@ inv_error_t MPU9250_DMP::setGyroFSR(unsigned short fsr)
 	return err;
 }
 
-inv_error_t MPU9250_DMP::setAccelFSR(unsigned char fsr)
+inv_error_t MPU6500_DMP::setAccelFSR(unsigned char fsr)
 {
 	inv_error_t err;
 	err = mpu_set_accel_fsr(fsr);
@@ -120,7 +120,7 @@ inv_error_t MPU9250_DMP::setAccelFSR(unsigned char fsr)
 	return err;
 }
 
-unsigned short MPU9250_DMP::getGyroFSR(void)
+unsigned short MPU6500_DMP::getGyroFSR(void)
 {
 	unsigned short tmp;
 	if (mpu_get_gyro_fsr(&tmp) == INV_SUCCESS)
@@ -130,7 +130,7 @@ unsigned short MPU9250_DMP::getGyroFSR(void)
 	return 0;
 }
 
-unsigned char MPU9250_DMP::getAccelFSR(void)
+unsigned char MPU6500_DMP::getAccelFSR(void)
 {
 	unsigned char tmp;
 	if (mpu_get_accel_fsr(&tmp) == INV_SUCCESS)
@@ -140,7 +140,7 @@ unsigned char MPU9250_DMP::getAccelFSR(void)
 	return 0;	
 }
 
-unsigned short MPU9250_DMP::getMagFSR(void)
+unsigned short MPU6500_DMP::getMagFSR(void)
 {
 	unsigned short tmp;
 	if (mpu_get_compass_fsr(&tmp) == INV_SUCCESS)
@@ -150,12 +150,12 @@ unsigned short MPU9250_DMP::getMagFSR(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::setLPF(unsigned short lpf)
+inv_error_t MPU6500_DMP::setLPF(unsigned short lpf)
 {
 	return mpu_set_lpf(lpf);
 }
 
-unsigned short MPU9250_DMP::getLPF(void)
+unsigned short MPU6500_DMP::getLPF(void)
 {
 	unsigned short tmp;
 	if (mpu_get_lpf(&tmp) == INV_SUCCESS)
@@ -165,12 +165,12 @@ unsigned short MPU9250_DMP::getLPF(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::setSampleRate(unsigned short rate)
+inv_error_t MPU6500_DMP::setSampleRate(unsigned short rate)
 {
     return mpu_set_sample_rate(rate);
 }
 
-unsigned short MPU9250_DMP::getSampleRate(void)
+unsigned short MPU6500_DMP::getSampleRate(void)
 {
 	unsigned short tmp;
 	if (mpu_get_sample_rate(&tmp) == INV_SUCCESS)
@@ -180,12 +180,12 @@ unsigned short MPU9250_DMP::getSampleRate(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::setCompassSampleRate(unsigned short rate)
+inv_error_t MPU6500_DMP::setCompassSampleRate(unsigned short rate)
 {
 	return mpu_set_compass_sample_rate(rate);
 }
 
-unsigned short MPU9250_DMP::getCompassSampleRate(void)
+unsigned short MPU6500_DMP::getCompassSampleRate(void)
 {
 	unsigned short tmp;
 	if (mpu_get_compass_sample_rate(&tmp) == INV_SUCCESS)
@@ -196,7 +196,7 @@ unsigned short MPU9250_DMP::getCompassSampleRate(void)
 	return 0;
 }
 
-float MPU9250_DMP::getGyroSens(void)
+float MPU6500_DMP::getGyroSens(void)
 {
 	float sens;
 	if (mpu_get_gyro_sens(&sens) == INV_SUCCESS)
@@ -206,7 +206,7 @@ float MPU9250_DMP::getGyroSens(void)
 	return 0;
 }
 	
-unsigned short MPU9250_DMP::getAccelSens(void)
+unsigned short MPU6500_DMP::getAccelSens(void)
 {
 	unsigned short sens;
 	if (mpu_get_accel_sens(&sens) == INV_SUCCESS)
@@ -216,12 +216,12 @@ unsigned short MPU9250_DMP::getAccelSens(void)
 	return 0;
 }
 
-float MPU9250_DMP::getMagSens(void)
+float MPU6500_DMP::getMagSens(void)
 {
 	return 0.15; // Static, 4915/32760
 }
 
-unsigned char MPU9250_DMP::getFifoConfig(void)
+unsigned char MPU6500_DMP::getFifoConfig(void)
 {
 	unsigned char sensors;
 	if (mpu_get_fifo_config(&sensors) == INV_SUCCESS)
@@ -231,29 +231,29 @@ unsigned char MPU9250_DMP::getFifoConfig(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::configureFifo(unsigned char sensors)
+inv_error_t MPU6500_DMP::configureFifo(unsigned char sensors)
 {
 	return mpu_configure_fifo(sensors);
 }
 
-inv_error_t MPU9250_DMP::resetFifo(void)
+inv_error_t MPU6500_DMP::resetFifo(void)
 {
 	return mpu_reset_fifo();
 }
 
-unsigned short MPU9250_DMP::fifoAvailable(void)
+unsigned short MPU6500_DMP::fifoAvailable(void)
 {
 	unsigned char fifoH, fifoL;
 	
-	if (mpu_read_reg(MPU9250_FIFO_COUNTH, &fifoH) != INV_SUCCESS)
+	if (mpu_read_reg(MPU6500_FIFO_COUNTH, &fifoH) != INV_SUCCESS)
 		return 0;
-	if (mpu_read_reg(MPU9250_FIFO_COUNTL, &fifoL) != INV_SUCCESS)
+	if (mpu_read_reg(MPU6500_FIFO_COUNTL, &fifoL) != INV_SUCCESS)
 		return 0;
 	
 	return (fifoH << 8 ) | fifoL;
 }
 
-inv_error_t MPU9250_DMP::updateFifo(void)
+inv_error_t MPU6500_DMP::updateFifo(void)
 {
 	short gyro[3], accel[3];
 	unsigned long timestamp;
@@ -280,23 +280,23 @@ inv_error_t MPU9250_DMP::updateFifo(void)
 	return INV_SUCCESS;
 }
 
-inv_error_t MPU9250_DMP::setSensors(unsigned char sensors)
+inv_error_t MPU6500_DMP::setSensors(unsigned char sensors)
 {
 	return mpu_set_sensors(sensors);
 }
 
-bool MPU9250_DMP::dataReady()
+bool MPU6500_DMP::dataReady()
 {
 	unsigned char intStatusReg;
 	
-	if (mpu_read_reg(MPU9250_INT_STATUS, &intStatusReg) == INV_SUCCESS)
+	if (mpu_read_reg(MPU6500_INT_STATUS, &intStatusReg) == INV_SUCCESS)
 	{
 		return (intStatusReg & (1<<INT_STATUS_RAW_DATA_RDY_INT));
 	}
 	return false;
 }
 
-inv_error_t MPU9250_DMP::update(unsigned char sensors)
+inv_error_t MPU6500_DMP::update(unsigned char sensors)
 {
 	inv_error_t aErr = INV_SUCCESS;
 	inv_error_t gErr = INV_SUCCESS;
@@ -315,7 +315,7 @@ inv_error_t MPU9250_DMP::update(unsigned char sensors)
 	return aErr | gErr | mErr | tErr;
 }
 
-int MPU9250_DMP::updateAccel(void)
+int MPU6500_DMP::updateAccel(void)
 {
 	short data[3];
 	
@@ -329,7 +329,7 @@ int MPU9250_DMP::updateAccel(void)
 	return INV_SUCCESS;
 }
 
-int MPU9250_DMP::updateGyro(void)
+int MPU6500_DMP::updateGyro(void)
 {
 	short data[3];
 	
@@ -343,7 +343,7 @@ int MPU9250_DMP::updateGyro(void)
 	return INV_SUCCESS;
 }
 
-int MPU9250_DMP::updateCompass(void)
+int MPU6500_DMP::updateCompass(void)
 {
 	short data[3];
 	
@@ -357,18 +357,18 @@ int MPU9250_DMP::updateCompass(void)
 	return INV_SUCCESS;
 }
 
-inv_error_t MPU9250_DMP::updateTemperature(void)
+inv_error_t MPU6500_DMP::updateTemperature(void)
 {
 	return mpu_get_temperature(&temperature, &time);
 }
 
-int MPU9250_DMP::selfTest(unsigned char debug)
+int MPU6500_DMP::selfTest(unsigned char debug)
 {
 	long gyro[3], accel[3];
 	return mpu_run_self_test(gyro, accel);
 }
 
-inv_error_t MPU9250_DMP::dmpBegin(unsigned short features, unsigned short fifoRate)
+inv_error_t MPU6500_DMP::dmpBegin(unsigned short features, unsigned short fifoRate)
 {
 	unsigned short feat = features;
 	unsigned short rate = fifoRate;
@@ -399,12 +399,12 @@ inv_error_t MPU9250_DMP::dmpBegin(unsigned short features, unsigned short fifoRa
 	return mpu_set_dmp_state(1);
 }
 
-inv_error_t MPU9250_DMP::dmpLoad(void)
+inv_error_t MPU6500_DMP::dmpLoad(void)
 {
 	return dmp_load_motion_driver_firmware();
 }
 
-unsigned short MPU9250_DMP::dmpGetFifoRate(void)
+unsigned short MPU6500_DMP::dmpGetFifoRate(void)
 {
 	unsigned short rate;
 	if (dmp_get_fifo_rate(&rate) == INV_SUCCESS)
@@ -413,13 +413,13 @@ unsigned short MPU9250_DMP::dmpGetFifoRate(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::dmpSetFifoRate(unsigned short rate)
+inv_error_t MPU6500_DMP::dmpSetFifoRate(unsigned short rate)
 {
 	if (rate > MAX_DMP_SAMPLE_RATE) rate = MAX_DMP_SAMPLE_RATE;
 	return dmp_set_fifo_rate(rate);
 }
 
-inv_error_t MPU9250_DMP::dmpUpdateFifo(void)
+inv_error_t MPU6500_DMP::dmpUpdateFifo(void)
 {
 	short gyro[3];
 	short accel[3];
@@ -459,7 +459,7 @@ inv_error_t MPU9250_DMP::dmpUpdateFifo(void)
 	return INV_SUCCESS;
 }
 
-inv_error_t MPU9250_DMP::dmpEnableFeatures(unsigned short mask)
+inv_error_t MPU6500_DMP::dmpEnableFeatures(unsigned short mask)
 {
 	unsigned short enMask = 0;
 	enMask |= mask;
@@ -469,7 +469,7 @@ inv_error_t MPU9250_DMP::dmpEnableFeatures(unsigned short mask)
 	return dmp_enable_feature(enMask);
 }
 
-unsigned short MPU9250_DMP::dmpGetEnabledFeatures(void)
+unsigned short MPU6500_DMP::dmpGetEnabledFeatures(void)
 {
 	unsigned short mask;
 	if (dmp_get_enabled_features(&mask) == INV_SUCCESS)
@@ -477,7 +477,7 @@ unsigned short MPU9250_DMP::dmpGetEnabledFeatures(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::dmpSetTap(
+inv_error_t MPU6500_DMP::dmpSetTap(
         unsigned short xThresh, unsigned short yThresh, unsigned short zThresh,
         unsigned char taps, unsigned short tapTime, unsigned short tapMulti)
 {
@@ -517,24 +517,24 @@ inv_error_t MPU9250_DMP::dmpSetTap(
 	return INV_SUCCESS;
 }
 
-unsigned char MPU9250_DMP::getTapDir(void)
+unsigned char MPU6500_DMP::getTapDir(void)
 {
 	_tap_available = false;
 	return tap_direction;
 }
 
-unsigned char MPU9250_DMP::getTapCount(void)
+unsigned char MPU6500_DMP::getTapCount(void)
 {
 	_tap_available = false;
 	return tap_count;
 }
 
-bool MPU9250_DMP::tapAvailable(void)
+bool MPU6500_DMP::tapAvailable(void)
 {
 	return _tap_available;
 }
 
-inv_error_t MPU9250_DMP::dmpSetOrientation(const signed char * orientationMatrix)
+inv_error_t MPU6500_DMP::dmpSetOrientation(const signed char * orientationMatrix)
 {
 	unsigned short scalar;
 	scalar = orientation_row_2_scale(orientationMatrix);
@@ -546,12 +546,12 @@ inv_error_t MPU9250_DMP::dmpSetOrientation(const signed char * orientationMatrix
 	return dmp_set_orientation(scalar);
 }
 
-unsigned char MPU9250_DMP::dmpGetOrientation(void)
+unsigned char MPU6500_DMP::dmpGetOrientation(void)
 {
-	return mpu9250_orientation;
+	return mpu6500_orientation;
 }
 
-inv_error_t MPU9250_DMP::dmpEnable3Quat(void)
+inv_error_t MPU6500_DMP::dmpEnable3Quat(void)
 {
 	unsigned short dmpFeatures;
 	
@@ -566,7 +566,7 @@ inv_error_t MPU9250_DMP::dmpEnable3Quat(void)
 	return dmp_enable_lp_quat(1);
 }
 	
-unsigned long MPU9250_DMP::dmpGetPedometerSteps(void)
+unsigned long MPU6500_DMP::dmpGetPedometerSteps(void)
 {
 	unsigned long steps;
 	if (dmp_get_pedometer_step_count(&steps) == INV_SUCCESS)
@@ -576,12 +576,12 @@ unsigned long MPU9250_DMP::dmpGetPedometerSteps(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::dmpSetPedometerSteps(unsigned long steps)
+inv_error_t MPU6500_DMP::dmpSetPedometerSteps(unsigned long steps)
 {
 	return dmp_set_pedometer_step_count(steps);
 }
 
-unsigned long MPU9250_DMP::dmpGetPedometerTime(void)
+unsigned long MPU6500_DMP::dmpGetPedometerTime(void)
 {
 	unsigned long walkTime;
 	if (dmp_get_pedometer_walk_time(&walkTime) == INV_SUCCESS)
@@ -591,47 +591,47 @@ unsigned long MPU9250_DMP::dmpGetPedometerTime(void)
 	return 0;
 }
 
-inv_error_t MPU9250_DMP::dmpSetPedometerTime(unsigned long time)
+inv_error_t MPU6500_DMP::dmpSetPedometerTime(unsigned long time)
 {
 	return dmp_set_pedometer_walk_time(time);
 }
 
-float MPU9250_DMP::calcAccel(int axis)
+float MPU6500_DMP::calcAccel(int axis)
 {
 	return (float) axis / (float) _aSense;
 }
 
-float MPU9250_DMP::calcGyro(int axis)
+float MPU6500_DMP::calcGyro(int axis)
 {
 	return (float) axis / (float) _gSense;
 }
 
-float MPU9250_DMP::calcMag(int axis)
+float MPU6500_DMP::calcMag(int axis)
 {
 	return (float) axis / (float) _mSense;
 }
 
-float MPU9250_DMP::calcTempCelsius()
+float MPU6500_DMP::calcTempCelsius()
 {
 	return ((float)temperature)/100000;
 }
-float MPU9250_DMP::calcTempFahrenheit()
+float MPU6500_DMP::calcTempFahrenheit()
 {
     float tempCelsius = ((float)temperature) / 100000;
     return (tempCelsius * 9.0 / 5.0) + 32.0;
 }
 
-float MPU9250_DMP::calcQuat(long axis)
+float MPU6500_DMP::calcQuat(long axis)
 {
 	return qToFloat(axis, 30);
 }
 	
-float MPU9250_DMP::qToFloat(long number, unsigned char q)
+float MPU6500_DMP::qToFloat(long number, unsigned char q)
 {
     return (float)((double)number / (double)(1 << q));
 }
 
-void MPU9250_DMP::computeEulerAngles(bool degrees)
+void MPU6500_DMP::computeEulerAngles(bool degrees)
 {
     float dqw = qToFloat(qw, 30);
     float dqx = qToFloat(qx, 30);
@@ -670,7 +670,7 @@ void MPU9250_DMP::computeEulerAngles(bool degrees)
     }
 }
 
-float MPU9250_DMP::computeCompassHeading(void)
+float MPU6500_DMP::computeCompassHeading(void)
 {
 	if (my == 0)
 		heading = (mx < 0) ? PI : 0;
@@ -686,7 +686,7 @@ float MPU9250_DMP::computeCompassHeading(void)
 	return heading;
 }
 
-unsigned short MPU9250_DMP::orientation_row_2_scale(const signed char *row)
+unsigned short MPU6500_DMP::orientation_row_2_scale(const signed char *row)
 {
     unsigned short b;
 
@@ -716,5 +716,5 @@ static void tap_cb(unsigned char direction, unsigned char count)
 
 static void orient_cb(unsigned char orient)
 {
-	mpu9250_orientation = orient;
+	mpu6500_orientation = orient;
 }

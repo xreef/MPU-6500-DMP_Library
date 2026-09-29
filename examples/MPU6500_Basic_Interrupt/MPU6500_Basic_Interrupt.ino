@@ -1,6 +1,6 @@
 /************************************************************
-MPU9250_Basic_DataReady
-Basic example for the MPU-9250 DMP Arduino Library that uses the sensor's
+MPU6500_Basic_DataReady
+Basic example for the MPU-6500 DMP Arduino Library that uses the sensor's
 "data ready" signal to indicate when to re-read sensor data.
 Note: This is not a traditional hardware interrupt; it simply signals that new
 data is available for reading.
@@ -12,11 +12,11 @@ https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 Supported Platforms:
 - ATSAMD21 (Arduino Zero, SparkFun SAMD21 Breakouts)
 *************************************************************/
-#include <MPU9250-DMP.h>
+#include <MPU6500-DMP.h>
 
 #define INTERRUPT_PIN 1  // Pin used to monitor the sensor's data-ready signal
 
-MPU9250_DMP imu;
+MPU6500_DMP imu;
 
 void setup()
 {
@@ -25,12 +25,12 @@ void setup()
   pinMode(INTERRUPT_PIN, INPUT_PULLUP);
   Serial.begin(115200);
 
-  // Initialize the MPU-9250; if initialization fails, halt execution.
+  // Initialize the MPU-6500; if initialization fails, halt execution.
   if (imu.begin() != INV_SUCCESS)
   {
     while (1)
     {
-      Serial.println("Unable to communicate with MPU-9250");
+      Serial.println("Unable to communicate with MPU-6500");
       Serial.println("Check connections, and try again.");
       Serial.println();
       delay(5000);
@@ -64,7 +64,7 @@ void loop()
   // A LOW state signifies that new data is ready to be read.
   if (digitalRead(INTERRUPT_PIN) == LOW)
   {
-    // Update the sensor readings from the MPU-9250.
+    // Update the sensor readings from the MPU-6500.
     // This fetches the latest accelerometer, gyroscope, and magnetometer data.
     imu.update(UPDATE_ACCEL | UPDATE_GYRO | UPDATE_COMPASS);
     printIMUData();

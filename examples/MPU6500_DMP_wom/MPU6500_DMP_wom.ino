@@ -1,9 +1,9 @@
 /************************************************************
-  MPU9250_Wake_On_Motion
-  Wake-on-Motion interrupt sketch for MPU-9250 DMP Arduino Library
+  MPU6500_Wake_On_Motion
+  Wake-on-Motion interrupt sketch for MPU-6500 DMP Arduino Library
 
   This example demonstrates how to use the Wake-on-Motion (WOM) mode
-  to wake the MPU9250 only when significant motion is detected.
+  to wake the MPU6500 only when significant motion is detected.
   This approach saves power by putting the device into low-power mode
   until motion triggers an interrupt.
 
@@ -18,7 +18,7 @@
   #define SerialPort Serial
 #endif
 
-#include <MPU9250-DMP.h>  // Include the MPU9250 DMP library
+#include <MPU6500-DMP.h>  // Include the MPU6500 DMP library
 
 // Define MPU6500 mode to disable the magnetometer when using DMP only.
 #define MPU6500
@@ -32,8 +32,8 @@ void imuISR(void);
 // Global flag to track the wake-on-motion event.
 volatile bool imuWoke = false;
 
-// Create an instance of the MPU9250_DMP class.
-MPU9250_DMP imu;
+// Create an instance of the MPU6500_DMP class.
+MPU6500_DMP imu;
 
 // Function prototype to read and display sensor data.
 void readSensorData();
@@ -48,11 +48,11 @@ void setup() {
   while (!SerialPort) {
     delay(100);
   }
-  SerialPort.println("MPU9250_Wake_On_Motion Example");
+  SerialPort.println("MPU6500_Wake_On_Motion Example");
 
-  // Initialize the MPU9250 sensor.
+  // Initialize the MPU6500 sensor.
   if (imu.begin() != INV_SUCCESS) {
-    SerialPort.println("Unable to communicate with MPU-9250");
+    SerialPort.println("Unable to communicate with MPU-6500");
     SerialPort.println("Check connections, and try again.");
     SerialPort.println();
     while (1);  // Halt the program if initialization fails.
@@ -84,7 +84,7 @@ void setup() {
   // Initialize the wake-on-motion flag.
   imuWoke = false;
 
-  SerialPort.println("MPU9250 configured for Wake-on-Motion.");
+  SerialPort.println("MPU6500 configured for Wake-on-Motion.");
 }
 
 void loop() {
