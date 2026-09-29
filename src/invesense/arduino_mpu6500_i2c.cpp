@@ -1,7 +1,7 @@
 /******************************************************************************
-arduino_mpu9250_i2c.cpp - MPU-9250 Digital Motion Processor Arduino Library 
+arduino_mpu6500_i2c.cpp - MPU-6500 Digital Motion Processor Arduino Library 
 ******************************************************************************/
-#include "../invesense/arduino_mpu9250_i2c.h"
+#include "../invesense/arduino_mpu6500_i2c.h"
 
 #include <Arduino.h>
 #include <Wire.h>

@@ -1,7 +1,7 @@
 /******************************************************************************
-arduino_mpu9250_clk.c - MPU-9250 Digital Motion Processor Arduino Library 
+arduino_mpu6500_clk.c - MPU-6500 Digital Motion Processor Arduino Library 
 ******************************************************************************/
-#include "../invesense/arduino_mpu9250_clk.h"
+#include "../invesense/arduino_mpu6500_clk.h"
 
 #include <Arduino.h>
 

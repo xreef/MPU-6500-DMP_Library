@@ -22,8 +22,8 @@
 #include <string.h>
 #include <math.h>
 #include <Arduino.h>
-#include "../invesense/arduino_mpu9250_clk.h"
-#include "../invesense/arduino_mpu9250_i2c.h"
+#include "../invesense/arduino_mpu6500_clk.h"
+#include "../invesense/arduino_mpu6500_i2c.h"
 #include "../invesense/dmpKey.h"
 #include "../invesense/dmpmap.h"
 #include "../invesense/inv_mpu.h"

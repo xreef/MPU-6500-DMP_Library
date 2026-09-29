@@ -1,8 +1,8 @@
 /******************************************************************************
-arduino_mpu9250_i2c.h - MPU-9250 Digital Motion Processor Arduino Library 
+arduino_mpu6500_i2c.h - MPU-6500 Digital Motion Processor Arduino Library 
 ******************************************************************************/
-#ifndef _ARDUINO_MPU9250_I2C_H_
-#define _ARDUINO_MPU9250_I2C_H_
+#ifndef _ARDUINO_MPU6500_I2C_H_
+#define _ARDUINO_MPU6500_I2C_H_
 
 #if defined(__cplusplus) 
 extern "C" {
@@ -17,4 +17,4 @@ int arduino_i2c_read(unsigned char slave_addr, unsigned char reg_addr,
 }
 #endif
 
-#endif // _ARDUINO_MPU9250_I2C_H_
+#endif // _ARDUINO_MPU6500_I2C_H_

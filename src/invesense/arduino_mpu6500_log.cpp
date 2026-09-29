@@ -1,7 +1,7 @@
 /******************************************************************************
-arduino_mpu9250_log.cpp - MPU-9250 Digital Motion Processor Arduino Library 
+arduino_mpu6500_log.cpp - MPU-6500 Digital Motion Processor Arduino Library 
 ******************************************************************************/
-#include "../invesense/arduino_mpu9250_log.h"
+#include "../invesense/arduino_mpu6500_log.h"
 
 #include <Arduino.h>
 #include <stdarg.h>
