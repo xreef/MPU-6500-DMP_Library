@@ -2,21 +2,26 @@
 MPU6500_Basic_DataReady
 Basic example for the MPU-6500 DMP Arduino Library that uses the sensor's
 "data ready" signal to indicate when to re-read sensor data.
-Note: This is not a traditional hardware interrupt; it simply signals that new
-data is available for reading.
+
+IMPORTANT: This is a DATA-READY interrupt, NOT a motion-detection interrupt.
+The interrupt pin will fire CONTINUOUSLY at the configured sample rate
+(e.g., 4Hz = every 250ms) regardless of whether the sensor is moving or not.
+Its purpose is to synchronize data reads with the sensor's internal sampling
+clock, avoiding redundant or stale reads.
+
+If you need an interrupt that fires only when motion is detected, see the
+MPU6500_DMP_wom (Wake-on-Motion) example instead.
 
 Renzo Mischianti @ www.mischianti.org
-Original creation date: November 23, 2016
-https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
-
-Supported Platforms:
-- ATSAMD21 (Arduino Zero, SparkFun SAMD21 Breakouts)
+https://github.com/xreef/MPU-6500-DMP_Library
 *************************************************************/
 #include <MPU6500-DMP.h>
 
-#define INTERRUPT_PIN 1  // Pin used to monitor the sensor's data-ready signal
+#define INTERRUPT_PIN 10  // Pin used to monitor the sensor's data-ready signal
 
 MPU6500_DMP imu;
+
+void printIMUData(void);
 
 void setup()
 {
@@ -36,6 +41,8 @@ void setup()
       delay(5000);
     }
   }
+
+  Serial.println("MPU-6500 inizializzato con successo!");
 
   // Configure the sensor to use the gyroscope and accelerometer,
   // and set their sample rate to 4Hz (slow rate to easily observe the data-ready signal).
@@ -61,6 +68,8 @@ void loop()
 {
   // Check the state of the data-ready indicator.
   // A LOW state signifies that new data is ready to be read.
+  // NOTE: This fires at the configured sample rate (4Hz here), so expect
+  // continuous output every ~250ms even if the sensor is perfectly still.
   if (digitalRead(INTERRUPT_PIN) == LOW)
   {
     // Update the sensor readings from the MPU-6500.
@@ -68,6 +77,7 @@ void loop()
     imu.update(UPDATE_ACCEL | UPDATE_GYRO);
     printIMUData();
   }
+  delay(10); // Prevents I2C spam on fast microcontrollers like ESP32
 }
 
 void printIMUData(void)

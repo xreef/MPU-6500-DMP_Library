@@ -21,7 +21,7 @@
 #include <MPU6500-DMP.h>  // Include the MPU6500 DMP library
 
 // Define the GPIO pin used for the Wake-on-Motion interrupt.
-#define INTERRUPT_PIN 1
+#define INTERRUPT_PIN 10
 
 // Forward declaration of the Interrupt Service Routine (ISR)
 void imuISR(void);
@@ -42,6 +42,8 @@ void setup() {
 
   // Begin serial communication at 115200 baud.
   SerialPort.begin(115200);
+  delay(2000); // Wait a bit for the serial monitor to open
+  SerialPort.println("Avvio del programma...");
   while (!SerialPort) {
     delay(100);
   }
@@ -54,6 +56,8 @@ void setup() {
     SerialPort.println();
     while (1);  // Halt the program if initialization fails.
   }
+
+  SerialPort.println("MPU-6500 inizializzato con successo!");
 
   // Configure the sensor to use only the accelerometer to save power.
   // This powers down the gyroscope.
@@ -84,7 +88,8 @@ void setup() {
   SerialPort.println("MPU6500 configured for Wake-on-Motion.");
 }
 
-void loop() {
+void loop()
+{
   // If a wake-on-motion event is detected, process the sensor data.
   if (imuWoke) {
     SerialPort.println("Motion detected! Reading sensor data...");
@@ -97,6 +102,7 @@ void loop() {
   }
 
   // Additional logic can be added here if needed.
+  delay(10); // Prevents I2C spam on fast microcontrollers like ESP32
 }
 
 // Interrupt Service Routine (ISR) for Wake-on-Motion.
@@ -109,17 +115,17 @@ void imuISR() {
 void readSensorData() {
   // Check if new sensor data is available.
   if (imu.dataReady()) {
-    // Update the sensor data (accelerometer and gyroscope).
-    imu.update(UPDATE_ACCEL | UPDATE_GYRO);
+    // Update the sensor data (accelerometer only).
+    // Note: Gyroscope is disabled to save power during WOM.
+    // If you need gyro data, you must enable it in setup() with:
+    // imu.setSensors(INV_XYZ_ACCEL | INV_XYZ_GYRO);
+    // Be aware this will significantly increase power consumption.
+    imu.update(UPDATE_ACCEL);
 
     // Calculate sensor readings.
     float ax = imu.calcAccel(imu.ax);
     float ay = imu.calcAccel(imu.ay);
     float az = imu.calcAccel(imu.az);
-
-    float gx = imu.calcGyro(imu.gx);
-    float gy = imu.calcGyro(imu.gy);
-    float gz = imu.calcGyro(imu.gz);
 
     // Print sensor data in a neat tabular format.
     SerialPort.println("------------------------------------------------");
@@ -128,10 +134,6 @@ void readSensorData() {
     SerialPort.print("Accel (g):   X = "); SerialPort.print(ax, 2);
     SerialPort.print(" | Y = "); SerialPort.print(ay, 2);
     SerialPort.print(" | Z = "); SerialPort.println(az, 2);
-
-    SerialPort.print("Gyro (dps):  X = "); SerialPort.print(gx, 2);
-    SerialPort.print(" | Y = "); SerialPort.print(gy, 2);
-    SerialPort.print(" | Z = "); SerialPort.println(gz, 2);
     SerialPort.println("------------------------------------------------\n");
   }
 }

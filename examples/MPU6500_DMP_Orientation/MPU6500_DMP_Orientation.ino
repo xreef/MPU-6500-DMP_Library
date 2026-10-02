@@ -5,10 +5,6 @@ MPU6500_DMP_Orientation
   Renzo Mischianti @ mischianti.org
  https://github.com/xreef/MPU-6500-DMP_Library
 
-Jim Lindblom @ SparkFun Electronics
-original creation date: November 23, 2016
-https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
-
 Uses the MPU-6500's digital motion processing engine to
 determine orientation of the board.
 
@@ -23,10 +19,6 @@ determine orientation of the board.
 
 MPU6500_DMP imu;
 
-unsigned long stepCount = 0;
-unsigned long stepTime = 0;
-unsigned long lastStepCount = 0;
-
 const signed char orientationMatrix[9] = {
   1, 0, 0,
   0, 1, 0,
@@ -37,6 +29,8 @@ unsigned char lastOrient = 0;
 void setup() 
 {
   SerialPort.begin(115200);
+  delay(2000); // Wait a bit for the serial monitor to open
+  SerialPort.println("Avvio del programma...");
 
   // Call imu.begin() to verify communication and initialize
   if (imu.begin() != INV_SUCCESS)
@@ -49,12 +43,15 @@ void setup()
       delay(5000);
     }
   }
+
+  SerialPort.println("MPU-6500 inizializzato con successo!");
+
   
   imu.dmpBegin(DMP_FEATURE_ANDROID_ORIENT);
   imu.dmpSetOrientation(orientationMatrix);
 }
 
-void loop() 
+void loop()
 {
   if ( imu.fifoAvailable() )
   {
@@ -80,5 +77,6 @@ void loop()
       lastOrient = orient;
     }
   }
+  delay(10); // Prevents I2C spam on fast microcontrollers like ESP32
 }
 

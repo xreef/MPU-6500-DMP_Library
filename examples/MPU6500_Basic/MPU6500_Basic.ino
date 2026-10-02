@@ -5,10 +5,6 @@ MPU6500_Basic
  Renzo Mischianti @ mischianti.org
  https://github.com/xreef/MPU-6500-DMP_Library
 
-Jim Lindblom @ SparkFun Electronics
-original creation date: November 23, 2016
-https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
-
 This example sketch demonstrates how to initialize the 
 MPU-6500, and stream its sensor outputs to a serial monitor.
 
@@ -23,9 +19,13 @@ MPU-6500, and stream its sensor outputs to a serial monitor.
 
 MPU6500_DMP imu;
 
+void printIMUData(void);
+
 void setup() 
 {
   SerialPort.begin(115200);
+  delay(2000); // Wait a bit for the serial monitor to open
+  SerialPort.println("Avvio del programma...");
 
   // Call imu.begin() to verify communication with and
   // initialize the MPU-6500 to it's default values.
@@ -41,6 +41,8 @@ void setup()
       delay(5000);
     }
   }
+
+  SerialPort.println("MPU-6500 inizializzato con successo!");
 
   // Use setSensors to turn on or off MPU-6500 sensors.
   // Any of the following defines can be combined:
@@ -67,10 +69,12 @@ void setup()
   imu.setSampleRate(10); // Set sample rate to 10Hz
 }
 
-void loop() 
+void loop()
 {
   // dataReady() checks to see if new accel/gyro data
-  // is available. It will return a boolean true or false
+  // is available. It will return a boolean true or false.
+  // NOTE: This is a software polling approach. For a hardware interrupt-driven
+  // approach, see the MPU6500_Basic_Interrupt example.
   if ( imu.dataReady() )
   {
     // Call update() to update the imu objects sensor data.
@@ -81,6 +85,7 @@ void loop()
     imu.update(UPDATE_ACCEL | UPDATE_GYRO);
     printIMUData();
   }
+  delay(10); // Prevents I2C spam on fast microcontrollers like ESP32
 }
 
 void printIMUData(void)

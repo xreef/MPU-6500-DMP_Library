@@ -5,10 +5,6 @@ MPU6500_DMP_Tap
   Renzo Mischianti @ mischianti.org
  https://github.com/xreef/MPU-6500-DMP_Library
 
-Jim Lindblom @ SparkFun Electronics
-original creation date: November 23, 2016
-https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
-
 The MPU-6500's digital motion processor (DMP) can monitor for
 single or double tap events on any of the three accelerometer
 axes.
@@ -30,6 +26,8 @@ MPU6500_DMP imu;
 void setup() 
 {
   SerialPort.begin(115200);
+  delay(2000); // Wait a bit for the serial monitor to open
+  SerialPort.println("Avvio del programma...");
 
   // Call imu.begin() to verify communication and initialize
   if (imu.begin() != INV_SUCCESS)
@@ -42,6 +40,8 @@ void setup()
       delay(5000);
     }
   }
+
+  SerialPort.println("MPU-6500 inizializzato con successo!");
 
   // Enable tap detection in the DMP. Set FIFO sample rate to 10Hz.
   imu.dmpBegin(DMP_FEATURE_TAP, 10);
@@ -62,7 +62,7 @@ void setup()
   imu.dmpSetTap(xThresh, yThresh, zThresh, taps, tapTime, tapMulti);
 }
 
-void loop() 
+void loop()
 {
   // Check for new data in the FIFO
   if ( imu.fifoAvailable() )
@@ -100,5 +100,6 @@ void loop()
       SerialPort.println(tapCnt);
     }
   }
+  delay(10); // Prevents I2C spam on fast microcontrollers like ESP32
 }
 
