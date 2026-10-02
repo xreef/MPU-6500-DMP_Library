@@ -82,7 +82,7 @@ void loop()
     // UPDATE_ACCEL, UPDATE_GYRO, and/or UPDATE_TEMP.
     // (The update function defaults to accel and gyro,
     //  so you don't have to specify these values.)
-    imu.update(UPDATE_ACCEL | UPDATE_GYRO);
+    imu.update(UPDATE_ACCEL | UPDATE_GYRO | UPDATE_TEMP);
     printIMUData();
   }
   delay(10); // Prevents I2C spam on fast microcontrollers like ESP32
@@ -104,10 +104,14 @@ void printIMUData(void)
   float gyroY = imu.calcGyro(imu.gy);
   float gyroZ = imu.calcGyro(imu.gz);
   
+  // Calculate temperature in degrees Celsius
+  float temp = imu.calcTempCelsius();
+  
   SerialPort.println("Accel: " + String(accelX) + ", " +
               String(accelY) + ", " + String(accelZ) + " g");
   SerialPort.println("Gyro: " + String(gyroX) + ", " +
               String(gyroY) + ", " + String(gyroZ) + " dps");
+  SerialPort.println("Temp: " + String(temp, 2) + " C");
   SerialPort.println("Time: " + String(imu.time) + " ms");
   SerialPort.println();
 }
