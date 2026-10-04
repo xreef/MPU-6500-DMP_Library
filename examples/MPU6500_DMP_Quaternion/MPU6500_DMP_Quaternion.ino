@@ -31,7 +31,7 @@ void setup()
 {
   SerialPort.begin(115200);
   delay(2000); // Wait a bit for the serial monitor to open
-  SerialPort.println("Avvio del programma...");
+  SerialPort.println("Starting...");
 
   // Call imu.begin() to verify communication and initialize
   if (imu.begin() != INV_SUCCESS)
@@ -45,7 +45,7 @@ void setup()
     }
   }
 
-  SerialPort.println("MPU-6500 inizializzato con successo!");
+  SerialPort.println("MPU-6500 initialized successfully!");
 
   
   imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT | // Enable 6-axis quat

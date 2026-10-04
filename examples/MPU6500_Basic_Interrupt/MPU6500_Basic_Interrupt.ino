@@ -42,7 +42,7 @@ void setup()
     }
   }
 
-  Serial.println("MPU-6500 inizializzato con successo!");
+  Serial.println("MPU-6500 initialized successfully!");
 
   // Configure the sensor to use the gyroscope and accelerometer,
   // and set their sample rate to 4Hz (slow rate to easily observe the data-ready signal).

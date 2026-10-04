@@ -26,7 +26,7 @@ void setup()
 {
   SerialPort.begin(115200);
   delay(2000); // Wait a bit for the serial monitor to open
-  SerialPort.println("Avvio del programma...");
+  SerialPort.println("Starting...");
 
   // Call imu.begin() to verify communication with and
   // initialize the MPU-6500 to it's default values.
@@ -43,7 +43,7 @@ void setup()
     }
   }
 
-  SerialPort.println("MPU-6500 inizializzato con successo!");
+  SerialPort.println("MPU-6500 initialized successfully!");
 
   // The sample rate of the accel/gyro can be set using
   // setSampleRate. Acceptable values range from 4Hz to 1kHz

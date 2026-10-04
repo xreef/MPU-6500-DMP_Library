@@ -43,7 +43,7 @@ void setup() {
   // Begin serial communication at 115200 baud.
   SerialPort.begin(115200);
   delay(2000); // Wait a bit for the serial monitor to open
-  SerialPort.println("Avvio del programma...");
+  SerialPort.println("Starting...");
   while (!SerialPort) {
     delay(100);
   }
@@ -57,7 +57,7 @@ void setup() {
     while (1);  // Halt the program if initialization fails.
   }
 
-  SerialPort.println("MPU-6500 inizializzato con successo!");
+  SerialPort.println("MPU-6500 initialized successfully!");
 
   // Configure the sensor to use only the accelerometer to save power.
   // This powers down the gyroscope.
