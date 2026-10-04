@@ -19,9 +19,9 @@ It is based on their Emedded MotionDriver 6.12 library.
 #include <Wire.h>
 #include <Arduino.h>
 
-// Optimally, these defines would be passed as compiler options, but Arduino
-// doesn't give us a great way to do that.
-#define MPU6500
+// The chip (MPU6500) is selected inside invesense/inv_mpu.c. It is not
+// #defined here, so the empty MPU6500 macro does not leak into user sketches
+// (it would break e.g. "class MPU6500" from other MPU-6500 libraries).
 
 // Include the Invensense MPU6500 driver and DMP keys:
 extern "C" {
@@ -305,13 +305,17 @@ public:
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t dmpSetPedometerTime(unsigned long time);
 	
-	// dmpSetInterruptMode --
+	// dmpSetInterruptMode -- Choose when the DMP raises its interrupt
+	// Input: DMP_INT_CONTINUOUS (every FIFO packet) or DMP_INT_GESTURE
+	//        (only on gestures such as tap/orientation)
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t dmpSetInterruptMode(unsigned char mode);
-	// dmpSetGyroBias --
+	// dmpSetGyroBias -- Push gyro biases into the DMP
+	// Input: 3-element array, biases in hardware units, q16 format
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t dmpSetGyroBias(long * bias);
-	// dmpSetAccelBias -- 
+	// dmpSetAccelBias -- Push accel biases into the DMP
+	// Input: 3-element array, biases in hardware units, q16 format
 	// Output: INV_SUCCESS (0) on success, otherwise error
 	inv_error_t dmpSetAccelBias(long * bias);
 	

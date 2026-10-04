@@ -512,6 +512,36 @@ inv_error_t MPU6500_DMP::dmpEnable3Quat(void)
 	
 	return dmp_enable_lp_quat(1);
 }
+
+inv_error_t MPU6500_DMP::dmpEnable6Quat(void)
+{
+	unsigned short dmpFeatures;
+	
+	// 3-axis and 6-axis quat are mutually exclusive
+	dmpFeatures = dmpGetEnabledFeatures();
+	dmpFeatures &= ~(DMP_FEATURE_LP_QUAT);
+	dmpFeatures |= DMP_FEATURE_6X_LP_QUAT;
+	
+	if (dmpEnableFeatures(dmpFeatures) != INV_SUCCESS)
+		return INV_ERROR;
+	
+	return dmp_enable_6x_lp_quat(1);
+}
+
+inv_error_t MPU6500_DMP::dmpSetInterruptMode(unsigned char mode)
+{
+	return dmp_set_interrupt_mode(mode);
+}
+
+inv_error_t MPU6500_DMP::dmpSetGyroBias(long * bias)
+{
+	return dmp_set_gyro_bias(bias);
+}
+
+inv_error_t MPU6500_DMP::dmpSetAccelBias(long * bias)
+{
+	return dmp_set_accel_bias(bias);
+}
 	
 unsigned long MPU6500_DMP::dmpGetPedometerSteps(void)
 {
