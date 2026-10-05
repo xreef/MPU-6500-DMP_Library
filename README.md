@@ -1,7 +1,8 @@
 # MPU-6500 DMP Library
 
 **Author:** Renzo Mischianti \
-**Website:** [**mischianti.org**](https://mischianti.org/)
+**Website:** [**mischianti.org**](https://mischianti.org/) \
+**Arduino Library Registry:** [indexing logs](https://downloads.arduino.cc/libraries/logs/github.com/xreef/MPU-6500-DMP_Library/)
 
 > [!TIP]
 > 📖 **Full documentation, wiring diagrams and tutorials are available on [mischianti.org](https://mischianti.org/tdk-invensense-mpu-6500-module-high-resolution-pinout-datasheet-schema-and-specs/).**
