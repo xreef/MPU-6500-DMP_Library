@@ -4,7 +4,7 @@
 **Website:** [**mischianti.org**](https://mischianti.org/)
 
 > [!TIP]
-> 📖 **Full documentation, wiring diagrams and tutorials are available on [mischianti.org](https://mischianti.org/mpu9250-with-esp32-and-arduino-accelerometer-magnetometer-and-gyroscope-via-i2c-and-spi/).**
+> 📖 **Full documentation, wiring diagrams and tutorials are available on [mischianti.org](https://mischianti.org/tdk-invensense-mpu-6500-module-high-resolution-pinout-datasheet-schema-and-specs/).**
 > See the [tutorials](#-tutorials-on-mischiantiorg) below for step-by-step guides.
 
 Arduino library for the TDK InvenSense **MPU-6500**, a 6-DOF IMU (3-axis gyroscope + 3-axis accelerometer), with support for the chip's **Digital Motion Processor (DMP)**.
@@ -40,7 +40,7 @@ In-depth articles with wiring diagrams for Arduino, ESP32 and other boards, expl
 
 | # | Article | Topics |
 |---|---------|--------|
-| 1 | [TDK InvenSense MPU-9250 module: high-resolution pinout, datasheet, schema and specs](https://mischianti.org/tdk-invensense-mpu-9250-module-high-resolution-pinout-datasheet-schema-and-specs/) | Pinout, datasheet, specs and a `WHO_AM_I` test sketch to tell an MPU-6500 from an MPU-9250 |
+| 1 | [TDK InvenSense MPU-6500 module: high-resolution pinout, datasheet, schema and specs](https://mischianti.org/tdk-invensense-mpu-6500-module-high-resolution-pinout-datasheet-schema-and-specs/) | Pinout, datasheet, specs and a `WHO_AM_I` test sketch to tell an MPU-6500 from an MPU-9250 |
 | 2 | [MPU9250 with ESP32 and Arduino: Accelerometer, Magnetometer, and Gyroscope via I2C and SPI](https://mischianti.org/mpu9250-with-esp32-and-arduino-accelerometer-magnetometer-and-gyroscope-via-i2c-and-spi/) ([IT Italiano](https://mischianti.org/it/mpu9250-con-esp32-e-arduino-accelerometro-magnetometro-e-giroscopio-tramite-i2c-e-spi/)) | Wiring, I2C and SPI, reading accelerometer and gyroscope, DMP |
 | 3 | [MPU9250 with ESP32 and Arduino: interrupt and low power mode](https://mischianti.org/mpu9250-with-esp32-and-arduino-interrupt-and-low-power-mode/) | Data-ready and wake-on-motion interrupts, low power, deep sleep |
 
