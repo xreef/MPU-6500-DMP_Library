@@ -18,6 +18,7 @@ Arduino library for the TDK InvenSense **MPU-6500**, a 6-DOF IMU (3-axis gyrosco
 
 - [Overview](#overview)
 - [Repository Contents](#repository-contents)
+- [Examples](#examples)
 - [Getting Started](#getting-started)
   - [Setting Up the MPU-6500](#setting-up-the-mpu-6500)
   - [Configuring Sensor Settings](#configuring-sensor-settings)
@@ -49,6 +50,33 @@ Along with configuring and reading from the accelerometer and gyroscope, this li
 | `/src/invesense`     | InvenSense Embedded MotionDriver 6.12 driver and DMP image, plus the Arduino I²C/clock/log adapters.         |
 | `keywords.txt`       | Keywords from this library that will be highlighted in the Arduino IDE.                                      |
 | `library.properties` | General library properties for the Arduino package manager.                                                  |
+
+---
+
+## Examples
+
+Every sketch is in the [`examples`](examples) folder and can be opened from **File > Examples > MPU6500-DMP** in the Arduino IDE.
+
+| Example | What it does | Key API | Notes |
+|---------|--------------|---------|-------|
+| [`MPU6500_Basic`](examples/MPU6500_Basic) | Polls accelerometer, gyroscope and temperature and prints them on the serial monitor. | `setSensors()`, `setGyroFSR()`, `setAccelFSR()`, `setLPF()`, `setSampleRate()`, `update()`, `calcAccel()`, `calcGyro()` | Start here: it verifies wiring and I2C communication. 10 Hz sample rate, gyro 2000 dps, accel +/-2 g, LPF 5 Hz. |
+| [`MPU6500_Basic_Interrupt`](examples/MPU6500_Basic_Interrupt) | Reads accelerometer and gyroscope only when the INT pin signals that new data is ready. | `enableInterrupt()`, `setIntLevel(INT_ACTIVE_LOW)`, `setIntLatched(INT_LATCHED)`, `update()` | **Data-ready interrupt, not a motion interrupt**: the pin fires at the sample rate (4 Hz) even when the sensor is still. For motion use `DMP_wom`. |
+| [`MPU6500_DMP_wom`](examples/MPU6500_DMP_wom) | Low-power **Wake-on-Motion**: only the accelerometer is powered and the INT pin goes active when the motion exceeds 40 mg; the sketch then prints the acceleration. | `setSensors(INV_XYZ_ACCEL)`, `setIntLevel()`, `mpu_lp_motion_interrupt()`, `attachInterrupt()`, `dataReady()` | Gyroscope off to save power. Tune the threshold on your hardware. |
+| [`MPU6500_FIFO_Basic`](examples/MPU6500_FIFO_Basic) | Reads accelerometer and gyroscope samples from the hardware FIFO instead of polling the registers. | `setSampleRate(100)`, `configureFifo()`, `fifoAvailable()`, `updateFifo()` | Gyroscope and accelerometer are buffered at 100 Hz in the 512-byte hardware FIFO. |
+| [`MPU6500_DMP_Quaternion`](examples/MPU6500_DMP_Quaternion) | Uses the DMP to compute the 6-axis quaternion and prints it together with pitch, roll and yaw. | `dmpBegin(DMP_FEATURE_6X_LP_QUAT \| DMP_FEATURE_GYRO_CAL, 10)`, `dmpUpdateFifo()`, `computeEulerAngles()` | Roll and pitch are referenced to gravity; yaw is relative to the start-up heading and drifts slowly. |
+| [`MPU6500_DMP_Orientation`](examples/MPU6500_DMP_Orientation) | Detects the orientation of the board (Android-style portrait/landscape) and reports it when it changes. | `dmpBegin(DMP_FEATURE_ANDROID_ORIENT)`, `dmpSetOrientation()`, `dmpGetOrientation()` | The `orientationMatrix` in the sketch maps the sensor axes to the board axes. |
+| [`MPU6500_DMP_Pedometer`](examples/MPU6500_DMP_Pedometer) | Counts steps with the DMP pedometer and prints the step count and walking time. | `dmpBegin(DMP_FEATURE_PEDOMETER)`, `dmpSetPedometerSteps()`, `dmpSetPedometerTime()`, `dmpGetPedometerSteps()`, `dmpGetPedometerTime()` | Shake the board up and down at stepping speed; the DMP needs a few consecutive steps (typically 5-7) before it starts counting. |
+| [`MPU6500_DMP_Tap`](examples/MPU6500_DMP_Tap) | Detects single and double taps with the DMP, here on the Z axis, and prints the tap direction and count. | `dmpBegin(DMP_FEATURE_TAP, 10)`, `dmpSetTap()`, `tapAvailable()`, `getTapDir()`, `getTapCount()` | Try to reach the maximum count of 8 taps. |
+| [`MPU6500_DMP_Gyro_Cal`](examples/MPU6500_DMP_Gyro_Cal) | Lets the DMP calibrate the gyroscope and prints the calibrated gyro values. | `dmpBegin(DMP_FEATURE_GYRO_CAL \| DMP_FEATURE_SEND_CAL_GYRO, 10)`, `dmpUpdateFifo()` | Keep the board still: after about 8 seconds without motion the DMP computes the gyro biases and subtracts them. |
+| [`MPU6500_WebSerial_3d`](examples/MPU6500_WebSerial_3d) | Streams quaternion and Euler angles in the format of the **3D Model Viewer**. **[Test it live in your browser](https://mischianti.org/3d-model-viewer-visualize-quaternions-and-euler-angles-from-serial-data-in-real-time/)**. | `dmpBegin(DMP_FEATURE_6X_LP_QUAT \| DMP_FEATURE_GYRO_CAL, 10)`, `dmpUpdateFifo()`, `computeEulerAngles()` | Serial output at 115200 baud in the format expected by the viewer. No magnetometer: yaw is relative to the start-up position and drifts slowly. |
+
+> [!TIP]
+> **Try the 3D example in your browser.** Upload `MPU6500_WebSerial_3d`, close the Arduino Serial Monitor so the port is free, then open the [3D Model Viewer page on mischianti.org](https://mischianti.org/3d-model-viewer-visualize-quaternions-and-euler-angles-from-serial-data-in-real-time/) and connect to the board's serial port (115200 baud) with the Web Serial API (Chrome or Edge).
+
+<p align="center">
+  <img src="resources/mpu-webserial-3d.jpg" width="420" alt="MPU sensor on a breadboard moving the 3D model in the mischianti.org 3D Model Viewer through Web Serial"><br>
+  <em>The MPU sensor driving the 3D Model Viewer in real time through the Web Serial API.</em>
+</p>
 
 ---
 
