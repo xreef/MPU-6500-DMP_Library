@@ -3,6 +3,10 @@
 **Author:** Renzo Mischianti \
 **Website:** [**mischianti.org**](https://mischianti.org/)
 
+> [!TIP]
+> 📖 **Full documentation, wiring diagrams and tutorials are available on [mischianti.org](https://mischianti.org/mpu9250-with-esp32-and-arduino-accelerometer-magnetometer-and-gyroscope-via-i2c-and-spi/).**
+> See the [tutorials](#-tutorials-on-mischiantiorg) below for step-by-step guides.
+
 Arduino library for the TDK InvenSense **MPU-6500**, a 6-DOF IMU (3-axis gyroscope + 3-axis accelerometer), with support for the chip's **Digital Motion Processor (DMP)**.
 
 > [!NOTE]
@@ -16,6 +20,7 @@ Arduino library for the TDK InvenSense **MPU-6500**, a 6-DOF IMU (3-axis gyrosco
 
 ## Table of Contents
 
+- [📖 Tutorials on mischianti.org](#-tutorials-on-mischiantiorg)
 - [Overview](#overview)
 - [Repository Contents](#repository-contents)
 - [Examples](#examples)
@@ -25,8 +30,30 @@ Arduino library for the TDK InvenSense **MPU-6500**, a 6-DOF IMU (3-axis gyrosco
   - [Reading Sensor Data Without FIFO](#reading-sensor-data-without-fifo)
   - [Using the DMP for Orientation Data](#using-the-dmp-for-orientation-data)
 - [Differences from the MPU-9250 library](#differences-from-the-mpu-9250-library)
-- [See also on mischianti.org](#see-also-on-mischiantiorg)
 - [Changelog](#changelog)
+
+---
+
+## 📖 Tutorials on mischianti.org
+
+In-depth articles with wiring diagrams for Arduino, ESP32 and other boards, explained examples and troubleshooting tips. The MPU-9250 articles apply to the MPU-6500 for everything except the magnetometer.
+
+| # | Article | Topics |
+|---|---------|--------|
+| 1 | [TDK InvenSense MPU-9250 module: high-resolution pinout, datasheet, schema and specs](https://mischianti.org/tdk-invensense-mpu-9250-module-high-resolution-pinout-datasheet-schema-and-specs/) | Pinout, datasheet, specs and a `WHO_AM_I` test sketch to tell an MPU-6500 from an MPU-9250 |
+| 2 | [MPU9250 with ESP32 and Arduino: Accelerometer, Magnetometer, and Gyroscope via I2C and SPI](https://mischianti.org/mpu9250-with-esp32-and-arduino-accelerometer-magnetometer-and-gyroscope-via-i2c-and-spi/) ([IT Italiano](https://mischianti.org/it/mpu9250-con-esp32-e-arduino-accelerometro-magnetometro-e-giroscopio-tramite-i2c-e-spi/)) | Wiring, I2C and SPI, reading accelerometer and gyroscope, DMP |
+| 3 | [MPU9250 with ESP32 and Arduino: interrupt and low power mode](https://mischianti.org/mpu9250-with-esp32-and-arduino-interrupt-and-low-power-mode/) | Data-ready and wake-on-motion interrupts, low power, deep sleep |
+
+### Related tools and articles
+
+- [3D model viewer: visualize Quaternions and Euler Angles from Serial Data in Real-Time](https://mischianti.org/3d-model-viewer-visualize-quaternions-and-euler-angles-from-serial-data-in-real-time/) - view the orientation computed by the DMP live in your browser (see the `WebSerial_3d` example)
+- [GY-291 ADXL345 I2C/SPI accelerometer with interrupt for ESP32, ESP8266, STM32 and Arduino](https://mischianti.org/gy-291-adxl345-i2c-spi-accelerometer-with-interrupt-for-esp32-esp8266-stm32-and-arduino/)
+
+### Browse by topic
+
+[MPU9250](https://mischianti.org/tag/mpu9250/) &middot;
+[Accelerometer](https://mischianti.org/category/electronic/sensors/accelerometer/) &middot;
+[Gyroscope](https://mischianti.org/category/electronic/sensors/gyroscope/)
 
 ---
 
@@ -184,17 +211,6 @@ void loop() {
 | `UPDATE_COMPASS`, `INV_XYZ_COMPASS` in `setSensors`| not used                               |
 | `update()` default: accel + gyro + compass        | `update()` default: accel + gyro        |
 | `WHO_AM_I` = `0x71`                               | `WHO_AM_I` = `0x70`                     |
-
----
-
-## See also on mischianti.org
-
-The MPU-9250 articles apply to the MPU-6500 for everything except the magnetometer:
-
-- [TDK InvenSense MPU-9250 module: pinout, datasheet, schema and specs](https://mischianti.org/tdk-invensense-mpu-9250-module-high-resolution-pinout-datasheet-schema-and-specs/): includes a `WHO_AM_I` test sketch to identify MPU-6500 vs MPU-9250
-- [MPU9250 with ESP32 and Arduino: Accelerometer, Magnetometer, and Gyroscope via I2C and SPI](https://mischianti.org/mpu9250-with-esp32-and-arduino-accelerometer-magnetometer-and-gyroscope-via-i2c-and-spi/)
-- [MPU9250 with ESP32 and Arduino: interrupt and low power mode](https://mischianti.org/mpu9250-with-esp32-and-arduino-interrupt-and-low-power-mode/)
-- [3D model viewer: visualize Quaternions and Euler Angles from Serial Data in Real-Time](https://mischianti.org/3d-model-viewer-visualize-quaternions-and-euler-angles-from-serial-data-in-real-time/)
 
 ---
 
