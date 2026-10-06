@@ -25,11 +25,9 @@
 #include <string.h>
 #include <math.h>
 
-#ifdef ESP32
-#define min(a,b) ((a)<(b)?(a):(b))
-#endif
-
-#ifdef ESP8266
+/* Defined here rather than relying on Arduino.h's min() macro: this file no
+ * longer includes <Arduino.h> (see the note below). */
+#ifndef min
 #define min(a,b) ((a)<(b)?(a):(b))
 #endif
 
@@ -45,7 +43,11 @@
  * fabsf(float x)
  * min(int a, int b)
  */
-#include <Arduino.h>
+/* Do not include <Arduino.h> from this C file: on cores whose Arduino.h defines
+ * delay()/delayMicroseconds() as plain `inline` (gnu89 inline semantics in C,
+ * e.g. arduino:zephyr) every .c unit emits its own external definition and the
+ * link fails with "multiple definition of `delay'". The Arduino services used
+ * here are reached through arduino_mpu6500_clk.c / arduino_mpu6500_i2c.cpp. */
 #define MPU6500
 #include "../invesense/arduino_mpu6500_i2c.h"
 #include "../invesense/arduino_mpu6500_clk.h"

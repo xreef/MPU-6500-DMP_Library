@@ -21,7 +21,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <Arduino.h>
+/* Do not include <Arduino.h> from this C file: on cores whose Arduino.h defines
+ * delay()/delayMicroseconds() as plain `inline` (gnu89 inline semantics in C,
+ * e.g. arduino:zephyr) every .c unit emits its own external definition and the
+ * link fails with "multiple definition of `delay'". The Arduino services used
+ * here are reached through arduino_mpu6500_clk.c / arduino_mpu6500_i2c.cpp. */
 #include "../invesense/arduino_mpu6500_clk.h"
 #include "../invesense/arduino_mpu6500_i2c.h"
 #include "../invesense/dmpKey.h"
